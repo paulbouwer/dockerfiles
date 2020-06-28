@@ -2,14 +2,14 @@
 
 paulbouwer/azure-cli 
 
-![image version](https://img.shields.io/docker/v/paulbouwer/azure-cli?sort=semver)
-![image size](https://img.shields.io/docker/image-size/paulbouwer/azure-cli?sort=semver)
+[![image version](https://img.shields.io/docker/v/paulbouwer/azure-cli?sort=semver)](https://hub.docker.com/repository/docker/paulbouwer/azure-cli)
+[![image size](https://img.shields.io/docker/image-size/paulbouwer/azure-cli?sort=semver)](https://hub.docker.com/repository/docker/paulbouwer/azure-cli)
 
 ## Description
 
-This is a custom image built from the `mcr.microsoft.com/azure-cli` image and bundling the current `kubectl` and `helm 3.x` binaries.
+This is a custom image built from the `mcr.microsoft.com/azure-cli` base image and bundling the current `kubectl` and `helm 3.x` binaries.  It includes a custom prompt and tab completion for all cli binaries.
 
-It is automatically built whenever there is a new release of the `mcr.microsoft.com/azure-cli` image. The latest versions of the `kubectl` and `helm 3.x` binaries at the time are bundled.
+It is automatically built whenever there is a new release of the `mcr.microsoft.com/azure-cli` image. The latest versions of the `kubectl` and `helm 3.x` binaries at the time are bundled. 
 
 The tag of the `paulbouwer/azure-cli` image matches the tag of the `mcr.microsoft.com/azure-cli` image on which it is based.
 
