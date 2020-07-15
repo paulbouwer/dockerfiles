@@ -20,6 +20,7 @@ jobs:
 
     outputs:
       modified: ${{ steps.check.outputs.modified }}
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
 
     steps:
 
@@ -58,6 +59,11 @@ jobs:
         git commit -m "Update versions - azure-cli $LATEST_AZURECLI_VERSION"
         git push
 
+    - name: Obtain commit SHA for versions.json file
+      id: commit
+      if: steps.check.outputs.modified == 'true'
+      run: echo ::set-output name=commit_sha::$(git rev-parse HEAD)
+
   build-and-push:
 
     runs-on: ubuntu-latest
@@ -71,11 +77,10 @@ jobs:
 
     steps:
 
-    - name: Pause and wait for git push to complete
-      run: sleep 10s
-
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: ${{ needs.update-version.outputs.commit_sha }}
 
     - name: Fetch versions
       run: |
