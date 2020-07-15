@@ -1,0 +1,96 @@
+name: "[azure-cli] Update docker image with latest azure-cli version"
+
+on:
+
+  push:
+    branches:
+      - master
+    paths:
+      - 'azure-cli/*'
+      - '.github/workflows/azure-cli-update-docker-image.yaml'
+
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+
+  update-version:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      modified: ${{ steps.check.outputs.modified }}
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Fetch current version of azure cli
+      run: echo ::set-env name=CURRENT_AZURECLI_VERSION::$(cat azure-cli/versions.json | jq -r ".azurecli")
+
+    - name: Fetch latest version of azure cli
+      run: echo ::set-env name=LATEST_AZURECLI_VERSION::$(curl -sL https://api.github.com/repos/Azure/azure-cli/releases/latest |  jq -r ".tag_name" | sed -e 's/^azure-cli-//g')
+
+    - name: Fetch latest version of kubectl
+      run: echo ::set-env name=LATEST_KUBECTL_VERSION::$(curl -sL https://storage.googleapis.com/kubernetes-release/release/stable.txt | sed -e 's/^v//g')
+
+    - name: Fetch latest version of helm
+      run: echo ::set-env name=LATEST_HELM_VERSION::$(curl -sL https://api.github.com/repos/helm/helm/releases?page=1 | jq -rc '.[] | select(.name | startswith("Helm v3")) | select(.prerelease!=true) | .tag_name' | head -1 | sed -e 's/^v//g')
+
+    - name: Update all versions if azure cli version is newer
+      if: env.CURRENT_AZURECLI_VERSION != env.LATEST_AZURECLI_VERSION
+      run: |
+        cat azure-cli/versions.json | jq ".azurecli=\"$LATEST_AZURECLI_VERSION\"" > tmp && mv tmp azure-cli/versions.json
+        cat azure-cli/versions.json | jq ".kubectl=\"$LATEST_KUBECTL_VERSION\"" > tmp && mv tmp azure-cli/versions.json
+        cat azure-cli/versions.json | jq ".helm=\"$LATEST_HELM_VERSION\"" > tmp && mv tmp azure-cli/versions.json
+
+    - name: Check for modified versions.json file
+      id: check
+      run: echo ::set-output name=modified::$([ -z "`git status --porcelain azure-cli/versions.json`" ] && echo "false" || echo "true")
+
+    - name: Commit latest versions.json file
+      if: steps.check.outputs.modified == 'true'
+      run: |
+        git config --global user.name "${{ secrets.COMMITTER_NAME }}"
+        git config --global user.email "${{ secrets.COMMITTER_EMAIL }}"
+        git add azure-cli/versions.json
+        git commit -m "Update versions - azure-cli $LATEST_AZURECLI_VERSION"
+        git push
+
+  build-and-push:
+
+    runs-on: ubuntu-latest
+
+    needs: update-version
+
+    if: needs.update-version.outputs.modified == 'true'
+
+    env:
+      DOCKER_IMAGE: paulbouwer/azure-cli
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Fetch versions
+      run: |
+        echo ::set-env name=AZURECLI_VERSION::$(cat azure-cli/versions.json | jq -r ".azurecli")
+        echo ::set-env name=KUBECTL_VERSION::$(cat azure-cli/versions.json | jq -r ".kubectl")
+        echo ::set-env name=HELM_VERSION::$(cat azure-cli/versions.json | jq -r ".helm")
+
+    - name: Build image
+      run: |
+        docker build -t $DOCKER_IMAGE:$AZURECLI_VERSION \
+          --build-arg AZURECLI_VERSION="$AZURECLI_VERSION" \
+          --build-arg KUBECTL_VERSION="$KUBECTL_VERSION" \
+          --build-arg HELM_VERSION="$HELM_VERSION" \
+          --file ./azure-cli/Dockerfile ./azure-cli
+
+    - name: Log into registry
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Push image to registry
+      run: |
+        docker push $DOCKER_IMAGE:$AZURECLI_VERSION
