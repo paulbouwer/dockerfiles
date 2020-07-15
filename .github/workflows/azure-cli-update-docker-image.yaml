@@ -71,6 +71,9 @@ jobs:
 
     steps:
 
+    - name: Pause and wait for git push to complete
+      run: sleep 10s
+
     - name: Checkout code
       uses: actions/checkout@v2
 
