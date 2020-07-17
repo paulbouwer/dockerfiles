@@ -73,7 +73,7 @@ jobs:
 
     needs: update-version
 
-    if: needs.update-version.outputs.modified == 'true' || env.GITHUB_EVENT_NAME == 'push'
+    if: needs.update-version.outputs.modified == 'true' || github.event_name == 'push'
 
     env:
       DOCKER_IMAGE: paulbouwer/azure-cli
