@@ -30,7 +30,7 @@ RUN mkdir helm-$HELM_VERSION \
     && helm completion bash > ~/completions/helm.bash \
     && echo "source ~/completions/helm.bash" >> ~/.bashrc
 
-ADD ./start-message.txt /tmp/start-message.txt
+COPY ./start-message.txt /tmp/start-message.txt
 
 RUN sed -i s/{{AZURECLI_VERSION}}/${AZURECLI_VERSION}/ /tmp/start-message.txt \
     && sed -i s/{{KUBECTL_VERSION}}/${KUBECTL_VERSION}/ /tmp/start-message.txt \
