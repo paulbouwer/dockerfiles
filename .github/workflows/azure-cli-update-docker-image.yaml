@@ -27,6 +27,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Detect workflow trigger event type
+      run: echo "GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME"
+
     - name: Fetch current version of azure cli
       run: echo ::set-env name=CURRENT_AZURECLI_VERSION::$(cat azure-cli/versions.json | jq -r ".azurecli")
 
@@ -70,7 +73,7 @@ jobs:
 
     needs: update-version
 
-    if: needs.update-version.outputs.modified == 'true'
+    if: needs.update-version.outputs.modified == 'true' || env.GITHUB_EVENT_NAME == 'push'
 
     env:
       DOCKER_IMAGE: paulbouwer/azure-cli

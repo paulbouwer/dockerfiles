@@ -17,6 +17,5 @@ The tag of the `paulbouwer/azure-cli` image matches the tag of the `mcr.microsof
 
 | Workflow | Status |
 |-|-|
-| Fetch latest azure-cli version | ![workflow](https://img.shields.io/github/workflow/status/paulbouwer/dockerfiles/Fetch%20latest%20azure-cli%20version) |
-| Build and publish azure-cli image | ![workflow](https://img.shields.io/github/workflow/status/paulbouwer/dockerfiles/Build%20and%20publish%20azure-cli%20image) |
+| [azure-cli] Update docker image with latest azure-cli version | ![workflow](https://img.shields.io/github/workflow/status/paulbouwer/dockerfiles/%5Bazure-cli%5D%20Update%20docker%20image%20with%20latest%20azure-cli%20version) |
 | | |
