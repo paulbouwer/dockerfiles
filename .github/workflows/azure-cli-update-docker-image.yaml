@@ -4,7 +4,7 @@ on:
 
   push:
     branches:
-      - master
+      - main
     paths:
       - 'azure-cli/*'
       - '.github/workflows/azure-cli-update-docker-image.yaml'
