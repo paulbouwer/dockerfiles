@@ -93,9 +93,9 @@ jobs:
 
     - name: Fetch versions
       run: |
-        echo "AZURECLI_VERSION=$(cat azure-cli/versions.json | jq -r ".azurecli")" >> $GITHUB_ENV
-        echo "KUBECTL_VERSION=$(cat azure-cli/versions.json | jq -r ".kubectl")" >> $GITHUB_ENV
-        echo "HELM_VERSION=$(cat azure-cli/versions.json | jq -r ".helm")" >> $GITHUB_ENV
+        echo "AZURECLI_VERSION=$(cat azure-cli/versions.json | jq -r '.azurecli')" >> $GITHUB_ENV
+        echo "KUBECTL_VERSION=$(cat azure-cli/versions.json | jq -r '.kubectl')" >> $GITHUB_ENV
+        echo "HELM_VERSION=$(cat azure-cli/versions.json | jq -r '.helm')" >> $GITHUB_ENV
 
     - name: Build image
       run: |
