@@ -31,16 +31,22 @@ jobs:
       run: echo "GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME"
 
     - name: Fetch current version of azure cli
-      run: echo ::set-env name=CURRENT_AZURECLI_VERSION::$(cat azure-cli/versions.json | jq -r ".azurecli")
+      run: echo "CURRENT_AZURECLI_VERSION=$(cat azure-cli/versions.json | jq -r '.azurecli')" >> $GITHUB_ENV
 
     - name: Fetch latest version of azure cli
-      run: echo ::set-env name=LATEST_AZURECLI_VERSION::$(curl -sL https://api.github.com/repos/Azure/azure-cli/releases/latest |  jq -r ".tag_name" | sed -e 's/^azure-cli-//g')
+      run: |
+        latest_azurecli_version=$(curl -sL https://api.github.com/repos/Azure/azure-cli/releases/latest |  jq -r '.tag_name' | sed -e 's/^azure-cli-//g')
+        echo "LATEST_AZURECLI_VERSION=$latest_azurecli_version" >> $GITHUB_ENV
 
     - name: Fetch latest version of kubectl
-      run: echo ::set-env name=LATEST_KUBECTL_VERSION::$(curl -sL https://storage.googleapis.com/kubernetes-release/release/stable.txt | sed -e 's/^v//g')
+      run: |
+        latest_kubectl_version=$(curl -sL https://storage.googleapis.com/kubernetes-release/release/stable.txt | sed -e 's/^v//g')
+        echo "LATEST_KUBECTL_VERSION=$latest_kubectl_version" >> $GITHUB_ENV
 
     - name: Fetch latest version of helm
-      run: echo ::set-env name=LATEST_HELM_VERSION::$(curl -sL https://api.github.com/repos/helm/helm/releases?page=1 | jq -rc '.[] | select(.name | startswith("Helm v3")) | select(.prerelease!=true) | .tag_name' | head -1 | sed -e 's/^v//g')
+      run: |
+        latest_helm_version=$(curl -sL https://api.github.com/repos/helm/helm/releases?page=1 | jq -rc '.[] | select(.name | startswith("Helm v3")) | select(.prerelease!=true) | .tag_name' | head -1 | sed -e 's/^v//g')
+        echo "LATEST_HELM_VERSION=$latest_helm_version" >> $GITHUB_ENV
 
     - name: Update all versions if azure cli version is newer
       if: env.CURRENT_AZURECLI_VERSION != env.LATEST_AZURECLI_VERSION
@@ -87,9 +93,9 @@ jobs:
 
     - name: Fetch versions
       run: |
-        echo ::set-env name=AZURECLI_VERSION::$(cat azure-cli/versions.json | jq -r ".azurecli")
-        echo ::set-env name=KUBECTL_VERSION::$(cat azure-cli/versions.json | jq -r ".kubectl")
-        echo ::set-env name=HELM_VERSION::$(cat azure-cli/versions.json | jq -r ".helm")
+        echo "AZURECLI_VERSION=$(cat azure-cli/versions.json | jq -r ".azurecli")" >> $GITHUB_ENV
+        echo "KUBECTL_VERSION=$(cat azure-cli/versions.json | jq -r ".kubectl")" >> $GITHUB_ENV
+        echo "HELM_VERSION=$(cat azure-cli/versions.json | jq -r ".helm")" >> $GITHUB_ENV
 
     - name: Build image
       run: |
