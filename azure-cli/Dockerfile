@@ -5,12 +5,15 @@ FROM mcr.microsoft.com/azure-cli:$AZURECLI_VERSION
 ARG AZURECLI_VERSION
 ARG KUBECTL_VERSION
 ARG HELM_VERSION
+ARG AZBROWSE_VERSION
 ENV LANG C.UTF-8
 
+# install bash completion
 RUN apk add bash-completion --update \
     && echo "" >> ~/.bashrc \
     && echo "source /etc/profile.d/bash_completion.sh" >> ~/.bashrc
 
+# install kubectl
 RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
     && chmod +x ./kubectl \
     && mv ./kubectl /usr/local/bin/kubectl \
@@ -20,6 +23,7 @@ RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/v${KUBEC
     && echo "alias k=kubectl" >> ~/.bashrc \
     && echo "complete -o default -F __start_kubectl k" >> ~/.bashrc
 
+# install helm
 RUN mkdir helm-$HELM_VERSION \
     && curl -L "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" | tar xz -C helm-${HELM_VERSION} --strip-components 1 \
     && cd ./helm-$HELM_VERSION \
@@ -30,12 +34,32 @@ RUN mkdir helm-$HELM_VERSION \
     && helm completion bash > ~/completions/helm.bash \
     && echo "source ~/completions/helm.bash" >> ~/.bashrc
 
-COPY ./start-message.txt /tmp/start-message.txt
+# install azbrowse
+RUN mkdir azbrowse-$AZBROWSE_VERSION \
+    && curl -L "https://github.com/lawrencegripper/azbrowse/releases/download/v${AZBROWSE_VERSION}/azbrowse_linux_amd64.tar.gz" | tar xz -C azbrowse-$AZBROWSE_VERSION \
+    && cd ./azbrowse-$AZBROWSE_VERSION \
+    && mv azbrowse /usr/local/bin/ \
+    && chmod +x /usr/local/bin/azbrowse \
+    && cd ../ \
+    && rm -fr ./azbrowse-$AZBROWSE_VERSION \
+    && azbrowse completion bash > ~/completions/azbrowse.bash \
+    && echo "source ~/completions/azbrowse.bash" >> ~/.bashrc
 
+# configure startup message with installed versions
+COPY ./start-message.txt /tmp/start-message.txt
 RUN sed -i s/{{AZURECLI_VERSION}}/${AZURECLI_VERSION}/ /tmp/start-message.txt \
     && sed -i s/{{KUBECTL_VERSION}}/${KUBECTL_VERSION}/ /tmp/start-message.txt \
     && sed -i s/{{HELM_VERSION}}/${HELM_VERSION}/ /tmp/start-message.txt \
+    && sed -i s/{{AZBROWSE_VERSION}}/${AZBROWSE_VERSION}/ /tmp/start-message.txt \
     && mv /tmp/start-message.txt ~/start-message.txt \
     && echo "cat ~/start-message.txt"  >> ~/.bashrc
 
-RUN echo "export PS1=$'\n\e[0;37;100m azure-cli \e[0;90;43m\UE0B0\e[0;90;43m ${AZURECLI_VERSION} \e[0;33;44m\UE0B0\e[0;37;44m \w \e[0;34;40m\UE0B0\e[0;39m\n$ '" >> ~/.bashrc
+# configure bash prompt
+COPY ./az.omp.json /tmp/az.omp.json
+RUN curl -L https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -o /usr/local/bin/oh-my-posh \
+    && chmod +x /usr/local/bin/oh-my-posh \
+    && mkdir ~/.oh-my-posh \
+    && mv /tmp/az.omp.json ~/.oh-my-posh/az.omp.json \
+    && echo "export AZURECLI_VERSION=${AZURECLI_VERSION}" >> ~/.bashrc \
+    && echo 'eval "$(oh-my-posh --init --shell bash --config ~/.oh-my-posh/az.omp.json)"' >> ~/.bashrc
+

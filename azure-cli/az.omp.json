@@ -1,0 +1,80 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "az :: {{.Folder}}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "foreground": "#fafafa",
+          "background": "#666",
+          "properties": {
+            "text": "az",
+            "postfix": " ",
+            "prefix": " "
+          }
+        },
+        {
+          "type": "command",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#36475c",
+          "background": "#a5b1c2",
+          "properties": {
+            "shell": "bash",
+            "command": "echo $AZURECLI_VERSION"
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#fafafa",
+          "background": "#007acc",
+          "properties": {
+            "style": "full",
+            "enable_hyperlink": false,
+            "prefix": " ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "text",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#fafafa",
+          "background": "#007acc",
+          "properties": {
+            "text": "",
+            "postfix": "",
+            "prefix": ""
+          }
+        }
+      ]
+    },
+    {
+      "type": "newline"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#7a7a7a",
+          "properties": {
+            "text": "$"
+          }
+        }
+      ]
+    }
+  ]
+}
