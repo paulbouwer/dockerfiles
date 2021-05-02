@@ -48,12 +48,18 @@ jobs:
         latest_helm_version=$(curl -sL https://api.github.com/repos/helm/helm/releases?page=1 | jq -rc '.[] | select(.name | startswith("Helm v3")) | select(.prerelease!=true) | .tag_name' | head -1 | sed -e 's/^v//g')
         echo "LATEST_HELM_VERSION=$latest_helm_version" >> $GITHUB_ENV
 
+    - name: Fetch latest version of azbrowse
+      run: |
+        latest_azbrowse_version=$(curl -sL https://api.github.com/repos/lawrencegripper/azbrowse/releases/latest | jq -r '.tag_name' | sed -e 's/^v//g')
+        echo "LATEST_AZBROWSE_VERSION=$latest_azbrowse_version" >> $GITHUB_ENV
+
     - name: Update all versions if azure cli version is newer
       if: env.CURRENT_AZURECLI_VERSION != env.LATEST_AZURECLI_VERSION
       run: |
         cat azure-cli/versions.json | jq ".azurecli=\"$LATEST_AZURECLI_VERSION\"" > tmp && mv tmp azure-cli/versions.json
         cat azure-cli/versions.json | jq ".kubectl=\"$LATEST_KUBECTL_VERSION\"" > tmp && mv tmp azure-cli/versions.json
         cat azure-cli/versions.json | jq ".helm=\"$LATEST_HELM_VERSION\"" > tmp && mv tmp azure-cli/versions.json
+        cat azure-cli/versions.json | jq ".azbrowse=\"$LATEST_AZBROWSE_VERSION\"" > tmp && mv tmp azure-cli/versions.json
 
     - name: Check for modified versions.json file
       id: check
@@ -96,6 +102,7 @@ jobs:
         echo "AZURECLI_VERSION=$(cat azure-cli/versions.json | jq -r '.azurecli')" >> $GITHUB_ENV
         echo "KUBECTL_VERSION=$(cat azure-cli/versions.json | jq -r '.kubectl')" >> $GITHUB_ENV
         echo "HELM_VERSION=$(cat azure-cli/versions.json | jq -r '.helm')" >> $GITHUB_ENV
+        echo "AZBROWSE_VERSION=$(cat azure-cli/versions.json | jq -r '.azbrowse')" >> $GITHUB_ENV
 
     - name: Build image
       run: |
@@ -103,6 +110,7 @@ jobs:
           --build-arg AZURECLI_VERSION="$AZURECLI_VERSION" \
           --build-arg KUBECTL_VERSION="$KUBECTL_VERSION" \
           --build-arg HELM_VERSION="$HELM_VERSION" \
+          --build-arg AZBROWSE_VERSION="$AZBROWSE_VERSION" \
           --file ./azure-cli/Dockerfile ./azure-cli
 
     - name: Log into registry
