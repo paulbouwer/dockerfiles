@@ -3,7 +3,6 @@ FROM ubuntu:20.04
 ARG KUBECTL_VERSION
 ARG HELM_VERSION
 ARG KUBIE_VERSION
-ARG AZBROWSE_VERSION
 
 # install bash completion
 RUN apt-get update && apt-get install -y --no-install-recommends \
