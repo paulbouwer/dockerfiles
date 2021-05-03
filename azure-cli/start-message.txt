@@ -3,3 +3,4 @@ azure-cli {{AZURECLI_VERSION}}
 kubectl {{KUBECTL_VERSION}}
 helm {{HELM_VERSION}}
 azbrowse {{AZBROWSE_VERSION}}
+
