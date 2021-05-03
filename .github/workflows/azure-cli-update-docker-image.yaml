@@ -40,7 +40,7 @@ jobs:
 
     - name: Fetch latest version of kubectl
       run: |
-        latest_kubectl_version=$(curl -sL https://storage.googleapis.com/kubernetes-release/release/stable.txt | sed -e 's/^v//g')
+        latest_kubectl_version=$(curl -sL https://dl.k8s.io/release/stable.txt | sed -e 's/^v//g')
         echo "LATEST_KUBECTL_VERSION=$latest_kubectl_version" >> $GITHUB_ENV
 
     - name: Fetch latest version of helm
