@@ -1,0 +1,115 @@
+name: "[k8s-cli] Update docker image with latest kubectl version"
+
+on:
+
+  push:
+    branches:
+      - main
+    paths:
+      - 'k8s-cli/*'
+      - '.github/workflows/k8s-cli-update-docker-image.yaml'
+
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+
+  update-version:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      modified: ${{ steps.check.outputs.modified }}
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Detect workflow trigger event type
+      run: echo "GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME"
+
+    - name: Fetch current version of kubectl
+      run: echo "CURRENT_KUBECTL_VERSION=$(cat k8s-cli/versions.json | jq -r '.kubectl')" >> $GITHUB_ENV
+
+    - name: Fetch latest version of kubectl
+      run: |
+        latest_kubectl_version=$(curl -sL https://dl.k8s.io/release/stable.txt | sed -e 's/^v//g')
+        echo "LATEST_KUBECTL_VERSION=$latest_kubectl_version" >> $GITHUB_ENV
+
+    - name: Fetch latest version of helm
+      run: |
+        latest_helm_version=$(curl -sL https://api.github.com/repos/helm/helm/releases?page=1 | jq -rc '.[] | select(.name | startswith("Helm v3")) | select(.prerelease!=true) | .tag_name' | head -1 | sed -e 's/^v//g')
+        echo "LATEST_HELM_VERSION=$latest_helm_version" >> $GITHUB_ENV
+
+    - name: Fetch latest version of kubie
+      run: |
+        latest_kubie_version=$(curl -sL https://api.github.com/repos/sbstp/kubie/releases/latest | jq -r '.tag_name' | sed -e 's/^v//g')
+        echo "LATEST_KUBIE_VERSION=$latest_kubie_version" >> $GITHUB_ENV
+
+    - name: Update all versions if kubectl version is newer
+      if: env.CURRENT_KUBECTL_VERSION != env.LATEST_KUBECTL_VERSION
+      run: |
+        cat k8s-cli/versions.json | jq ".kubectl=\"$LATEST_KUBECTL_VERSION\"" > tmp && mv tmp k8s-cli/versions.json
+        cat k8s-cli/versions.json | jq ".helm=\"$LATEST_HELM_VERSION\"" > tmp && mv tmp k8s-cli/versions.json
+        cat k8s-cli/versions.json | jq ".kubie=\"$LATEST_KUBIE_VERSION\"" > tmp && mv tmp k8s-cli/versions.json
+
+    - name: Check for modified versions.json file
+      id: check
+      run: echo ::set-output name=modified::$([ -z "`git status --porcelain k8s-cli/versions.json`" ] && echo "false" || echo "true")
+
+    - name: Commit latest versions.json file
+      if: steps.check.outputs.modified == 'true'
+      run: |
+        git config --global user.name "${{ secrets.COMMITTER_NAME }}"
+        git config --global user.email "${{ secrets.COMMITTER_EMAIL }}"
+        git add k8s-cli/versions.json
+        git commit -m "Update versions - k8s-cli $LATEST_KUBECTL_VERSION"
+        git push
+
+    - name: Obtain commit SHA for versions.json file
+      id: commit
+      if: steps.check.outputs.modified == 'true'
+      run: echo ::set-output name=commit_sha::$(git rev-parse HEAD)
+
+  build-and-push:
+
+    runs-on: ubuntu-latest
+
+    needs: update-version
+
+    if: needs.update-version.outputs.modified == 'true' || github.event_name == 'push'
+
+    env:
+      DOCKER_IMAGE: paulbouwer/k8s-cli
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ needs.update-version.outputs.commit_sha }}
+
+    - name: Fetch versions
+      run: |
+        echo "AZURECLI_VERSION=$(cat k8s-cli/versions.json | jq -r '.azurecli')" >> $GITHUB_ENV
+        echo "KUBECTL_VERSION=$(cat k8s-cli/versions.json | jq -r '.kubectl')" >> $GITHUB_ENV
+        echo "HELM_VERSION=$(cat k8s-cli/versions.json | jq -r '.helm')" >> $GITHUB_ENV
+        echo "AZBROWSE_VERSION=$(cat k8s-cli/versions.json | jq -r '.azbrowse')" >> $GITHUB_ENV
+
+    - name: Build image
+      run: |
+        docker build -t $DOCKER_IMAGE:$AZURECLI_VERSION \
+          --build-arg AZURECLI_VERSION="$AZURECLI_VERSION" \
+          --build-arg KUBECTL_VERSION="$KUBECTL_VERSION" \
+          --build-arg HELM_VERSION="$HELM_VERSION" \
+          --build-arg AZBROWSE_VERSION="$AZBROWSE_VERSION" \
+          --file ./k8s-cli/Dockerfile ./k8s-cli
+
+    - name: Log into registry
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Push image to registry
+      run: |
+        docker push $DOCKER_IMAGE:$AZURECLI_VERSION
