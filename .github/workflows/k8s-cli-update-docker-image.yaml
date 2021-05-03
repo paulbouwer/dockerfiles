@@ -93,18 +93,16 @@ jobs:
 
     - name: Fetch versions
       run: |
-        echo "AZURECLI_VERSION=$(cat k8s-cli/versions.json | jq -r '.azurecli')" >> $GITHUB_ENV
         echo "KUBECTL_VERSION=$(cat k8s-cli/versions.json | jq -r '.kubectl')" >> $GITHUB_ENV
         echo "HELM_VERSION=$(cat k8s-cli/versions.json | jq -r '.helm')" >> $GITHUB_ENV
-        echo "AZBROWSE_VERSION=$(cat k8s-cli/versions.json | jq -r '.azbrowse')" >> $GITHUB_ENV
+        echo "KUBIE_VERSION=$(cat k8s-cli/versions.json | jq -r '.kubie')" >> $GITHUB_ENV
 
     - name: Build image
       run: |
-        docker build -t $DOCKER_IMAGE:$AZURECLI_VERSION \
-          --build-arg AZURECLI_VERSION="$AZURECLI_VERSION" \
+        docker build -t $DOCKER_IMAGE:$KUBECTL_VERSION \
           --build-arg KUBECTL_VERSION="$KUBECTL_VERSION" \
           --build-arg HELM_VERSION="$HELM_VERSION" \
-          --build-arg AZBROWSE_VERSION="$AZBROWSE_VERSION" \
+          --build-arg KUBIE_VERSION="$KUBIE_VERSION" \
           --file ./k8s-cli/Dockerfile ./k8s-cli
 
     - name: Log into registry
@@ -112,4 +110,4 @@ jobs:
 
     - name: Push image to registry
       run: |
-        docker push $DOCKER_IMAGE:$AZURECLI_VERSION
+        docker push $DOCKER_IMAGE:$KUBECTL_VERSION
