@@ -1,0 +1,5 @@
+
+kubectl {{KUBECTL_VERSION}}
+helm {{HELM_VERSION}}
+kubie {{KUBIE_VERSION}}
+
