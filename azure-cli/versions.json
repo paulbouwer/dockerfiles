@@ -1,5 +1,5 @@
 {
-  "azurecli": "2.29.0",
+  "azurecli": "2.29.1",
   "kubectl": "1.22.2",
   "helm": "3.6.0",
   "azbrowse": "2.1.520"
