@@ -7,7 +7,7 @@ paulbouwer/azure-cli
 
 ## Description
 
-This is a custom image built from the `mcr.microsoft.com/azure-cli` base image and bundling the current `kubectl`, `helm`, and `azbrowse` binaries.  It includes a custom prompt and tab completion for all cli binaries.
+This is a custom image built from the `mcr.microsoft.com/azure-cli` base image and bundling the current `kubectl`, `helm`, and `azbrowse` binaries.  It includes a custom prompt via `oh-my-posh` and tab completion for all cli binaries.
 
 It is automatically built whenever there is a new release of the `mcr.microsoft.com/azure-cli` image. The latest versions of the `kubectl`, `helm`, and `azbrowse` binaries at the time are bundled.
 
@@ -28,3 +28,4 @@ The tag of the `paulbouwer/azure-cli` image matches the tag of the `mcr.microsof
 | [kubectl](https://github.com/kubernetes/kubernetes) | [Apache License 2.0](https://github.com/kubernetes/kubectl/blob/master/LICENSE) |
 | [helm](https://github.com/helm/helm) | [Apache License 2.0](https://github.com/helm/helm/blob/main/LICENSE) |
 | [azbrowse](https://github.com/lawrencegripper/azbrowse) | [MIT License](https://github.com/lawrencegripper/azbrowse/blob/main/LICENSE) |
+| [oh-my-posh](https://github.com/jandedobbeleer/oh-my-posh) | [GPL-3.0 License](https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/COPYING) |
