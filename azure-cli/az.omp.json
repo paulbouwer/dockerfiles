@@ -1,8 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
   "final_space": true,
-  "console_title": true,
-  "console_title_style": "template",
   "console_title_template": "az :: {{.Folder}}",
   "blocks": [
     {
@@ -12,14 +11,10 @@
         {
           "type": "text",
           "style": "diamond",
-          "trailing_diamond": "\ue0b0",
           "foreground": "#fafafa",
           "background": "#666",
-          "properties": {
-            "text": "az",
-            "postfix": " ",
-            "prefix": " "
-          }
+          "trailing_diamond": "\ue0b0",
+          "template": " az "
         },
         {
           "type": "command",
@@ -27,9 +22,10 @@
           "powerline_symbol": "\ue0b0",
           "foreground": "#36475c",
           "background": "#a5b1c2",
+          "template": " {{ .Output }} ",
           "properties": {
-            "shell": "bash",
-            "command": "echo $AZURECLI_VERSION"
+            "command": "echo $AZURECLI_VERSION",
+            "shell": "bash"
           }
         },
         {
@@ -38,11 +34,9 @@
           "powerline_symbol": "\ue0b0",
           "foreground": "#fafafa",
           "background": "#007acc",
+          "template": " {{ .Path }}",
           "properties": {
-            "style": "full",
-            "enable_hyperlink": false,
-            "prefix": " ",
-            "postfix": ""
+            "style": "full"
           }
         },
         {
@@ -50,12 +44,7 @@
           "style": "powerline",
           "powerline_symbol": "\ue0b0",
           "foreground": "#fafafa",
-          "background": "#007acc",
-          "properties": {
-            "text": "",
-            "postfix": "",
-            "prefix": ""
-          }
+          "background": "#007acc"
         }
       ]
     },
@@ -70,9 +59,7 @@
           "type": "text",
           "style": "plain",
           "foreground": "#7a7a7a",
-          "properties": {
-            "text": "$"
-          }
+          "template": " $ "
         }
       ]
     }

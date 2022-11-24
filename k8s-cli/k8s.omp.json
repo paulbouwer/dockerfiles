@@ -1,8 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
   "final_space": true,
-  "console_title": true,
-  "console_title_style": "template",
   "console_title_template": "k8s :: {{.Folder}}",
   "blocks": [
     {
@@ -10,67 +9,55 @@
       "alignment": "left",
       "segments": [
         {
-          "type": "text",
-          "style": "diamond",
-          "trailing_diamond": "\ue0b0",
-          "foreground": "#fafafa",
           "background": "#666",
-          "properties": {
-            "text": "k8s",
-            "postfix": " ",
-            "prefix": " "
-          }
+          "foreground": "#fafafa",
+          "style": "diamond",
+          "template": " k8s ",
+          "trailing_diamond": "\ue0b0",
+          "type": "text"
         },
         {
-          "type": "command",
-          "style": "powerline",
-          "powerline_symbol": "\ue0b0",
-          "foreground": "#36475c",
           "background": "#a5b1c2",
+          "foreground": "#36475c",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "shell": "bash",
-            "command": "echo $KUBECTL_VERSION"
-          }
+            "command": "echo $KUBECTL_VERSION",
+            "shell": "bash"
+          },
+          "style": "powerline",
+          "template": " {{ .Output }} ",
+          "type": "command"
         },
         {
-          "type": "kubectl",
-          "style": "powerline",
-          "powerline_symbol": "\ue0b0",
-          "foreground": "#fff",
           "background": "#4b6584",
           "background_templates": [
             "{{if contains \"default\" .Namespace}}#a55eea{{end}}",
             "{{if empty .Namespace}}#a55eea{{end}}",
             "{{if hasPrefix \"kube-\" .Namespace}}#fc5c65{{end}}"
           ],
-          "properties": {
-            "template": "{{.Context}}{{if .Namespace}}/{{.Namespace}}{{end}}"
-          }
+          "foreground": "#fff",
+          "powerline_symbol": "\ue0b0",
+          "style": "powerline",
+          "template": " {{.Context}}{{if .Namespace}}/{{.Namespace}}{{end}} ",
+          "type": "kubectl"
         },
         {
-          "type": "path",
-          "style": "powerline",
-          "powerline_symbol": "\ue0b0",
-          "foreground": "#fafafa",
           "background": "#007acc",
+          "foreground": "#fafafa",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "full",
-            "enable_hyperlink": false,
-            "prefix": " ",
-            "postfix": ""
-          }
+            "style": "full"
+          },
+          "style": "powerline",
+          "template": " {{ .Path }}",
+          "type": "path"
         },
         {
-          "type": "text",
-          "style": "powerline",
-          "powerline_symbol": "\ue0b0",
-          "foreground": "#fafafa",
           "background": "#007acc",
-          "properties": {
-            "text": "",
-            "postfix": "",
-            "prefix": ""
-          }
+          "foreground": "#fafafa",
+          "powerline_symbol": "\ue0b0",
+          "style": "powerline",
+          "type": "text"
         }
       ]
     },
@@ -82,12 +69,10 @@
       "alignment": "left",
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#7a7a7a",
-          "properties": {
-            "text": "$"
-          }
+          "style": "plain",
+          "template": "$",
+          "type": "text"
         }
       ]
     }
