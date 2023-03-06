@@ -62,11 +62,9 @@
       ]
     },
     {
-      "type": "newline"
-    },
-    {
       "type": "prompt",
       "alignment": "left",
+      "newline": true,
       "segments": [
         {
           "foreground": "#7a7a7a",
