@@ -25,7 +25,7 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Detect workflow trigger event type
       run: echo "GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME"
@@ -57,7 +57,9 @@ jobs:
 
     - name: Check for modified versions.json file
       id: check
-      run: echo ::set-output name=modified::$([ -z "`git status --porcelain k8s-cli/versions.json`" ] && echo "false" || echo "true")
+      run: |
+        modified_versions_file=$([ -z "`git status --porcelain k8s-cli/versions.json`" ] && echo "false" || echo "true")
+        echo "modified=$modified_versions_file" >> "$GITHUB_OUTPUT"
 
     - name: Commit latest versions.json file
       if: steps.check.outputs.modified == 'true'
@@ -71,7 +73,7 @@ jobs:
     - name: Obtain commit SHA for versions.json file
       id: commit
       if: steps.check.outputs.modified == 'true'
-      run: echo ::set-output name=commit_sha::$(git rev-parse HEAD)
+      run: echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   build-and-push:
 
@@ -87,7 +89,7 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: ${{ needs.update-version.outputs.commit_sha }}
 
