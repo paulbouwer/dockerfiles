@@ -1,6 +1,6 @@
 {
-  "azurecli": "2.46.0",
-  "kubectl": "1.26.2",
-  "helm": "3.11.1",
+  "azurecli": "2.47.0",
+  "kubectl": "1.26.3",
+  "helm": "3.11.2",
   "azbrowse": "2.1.679"
 }
