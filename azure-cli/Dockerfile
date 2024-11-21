@@ -9,7 +9,12 @@ ARG AZBROWSE_VERSION
 ENV LANG C.UTF-8
 
 # install bash completion
-RUN apk add bash-completion --update \
+RUN tdnf update -qy tdnf \
+    && tdnf -y install \
+        bash-completion \
+        ca-certificates \
+        curl \
+        tar \
     && echo "" >> ~/.bashrc \
     && echo "source /etc/profile.d/bash_completion.sh" >> ~/.bashrc
 
@@ -60,9 +65,7 @@ RUN curl -L https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/downloa
     && chmod +x /usr/local/bin/oh-my-posh \
     && mkdir ~/.oh-my-posh \
     && mv /tmp/az.omp.json ~/.oh-my-posh/az.omp.json \
-    && apk add libc6-compat gcompat --update \
     && /usr/local/bin/oh-my-posh --init --shell bash --config ~/.oh-my-posh/az.omp.json > ~/.oh-my-posh/init.bash \
-    && sed -i 's#/lib/ld-musl-x86_64.so.1#/usr/local/bin/oh-my-posh#' ~/.oh-my-posh/init.bash \
     && echo "export AZURECLI_VERSION=${AZURECLI_VERSION}" >> ~/.bashrc \
     && echo 'source ~/.oh-my-posh/init.bash' >> ~/.bashrc
 
