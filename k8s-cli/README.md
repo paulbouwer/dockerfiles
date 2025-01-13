@@ -17,7 +17,7 @@ The tag of the `paulbouwer/k8s-cli` image matches the version of the `kubectl` c
 
 | GitHub Action | Status |
 |-|-|
-| [k8s-cli] Update docker image with latest kubectl version | [![workflow](https://img.shields.io/github/workflow/status/paulbouwer/dockerfiles/%5Bk8s-cli%5D%20Update%20docker%20image%20with%20latest%20kubectl%20version)](https://github.com/paulbouwer/dockerfiles/actions/workflows/k8s-cli-update-docker-image.yaml) |
+| [k8s-cli] Update docker image with latest kubectl version | [![workflow](https://img.shields.io/github/actions/workflow/status/paulbouwer/dockerfiles/k8s-cli-update-docker-image.yaml?branch=main)](https://github.com/paulbouwer/dockerfiles/actions/workflows/k8s-cli-update-docker-image.yaml) |
 | | |
 
 ## Included
