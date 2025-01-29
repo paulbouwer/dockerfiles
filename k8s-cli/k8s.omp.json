@@ -38,7 +38,7 @@
           "foreground": "#fff",
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
-          "template": " {{.Context}}{{if .Namespace}}/{{.Namespace}}{{end}} ",
+          "template": " {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
           "type": "kubectl"
         },
         {

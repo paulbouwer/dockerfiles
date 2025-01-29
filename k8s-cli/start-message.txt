@@ -1,5 +1,7 @@
 
 kubectl {{KUBECTL_VERSION}}
 helm {{HELM_VERSION}}
-kubie {{KUBIE_VERSION}}
+nushell {{NUSHELL_VERSION}}
+carapace {{CARAPACE_VERSION}}
+gum {{GUM_VERSION}}
 
