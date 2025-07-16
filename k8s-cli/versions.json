@@ -1,7 +1,7 @@
 {
-  "kubectl": "1.33.2",
-  "helm": "",
-  "nushell": "null",
-  "carapace": "null",
-  "gum": "null"
+  "kubectl": "1.33.3",
+  "helm": "3.18.4",
+  "nushell": "0.105.1",
+  "carapace": "1.3.3",
+  "gum": "0.16.2"
 }
