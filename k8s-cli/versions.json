@@ -1,5 +1,5 @@
 {
-  "kubectl": "Timed out while waiting on cache-iad-kiad7000078-IAD\r",
+  "kubectl": "1.35.0",
   "helm": "3.19.4",
   "nushell": "0.109.1",
   "carapace": "1.5.7",
